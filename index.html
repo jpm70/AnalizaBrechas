@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Brechas con XposedOrNot</title>
+    <!-- Carga de Tailwind CSS para el estilo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Gris muy claro */
+        }
+        .container-card {
+            max-width: 600px;
+        }
+        /* Estilos para el indicador de carga */
+        .loader {
+            border-top-color: #3b82f6;
+            -webkit-animation: spin 1s ease-in-out infinite;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex items-center justify-center min-h-screen bg-gray-100">
+
+    <div id="app" class="container-card w-full bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">
+            <svg class="inline w-8 h-8 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944c-.752 0-1.492.1-2.203.292m1.536 2.016h-3.072m3.072 0a2 2 0 100 4 2 2 0 000-4zM12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
+            Análisis de Brechas (XposedOrNot)
+        </h1>
+        <p class="text-center text-gray-500 mb-6">
+            Comprueba si una dirección de correo electrónico ha sido comprometida usando la API pública y gratuita de XposedOrNot.
+        </p>
+
+        <!-- Formulario de Búsqueda -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <input type="email" id="emailInput" placeholder="Introduce tu email aquí (ej: usuario@dominio.com)"
+                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                   required>
+            <button id="searchButton" onclick="checkBreaches()"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center">
+                <span id="buttonText">Comprobar Brechas</span>
+                <div id="loader" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 hidden ml-2"></div>
+            </button>
+        </div>
+
+        <!-- Área de Resultados -->
+        <div id="results" class="space-y-4">
+            <!-- Los resultados se inyectarán aquí -->
+        </div>
+
+        <!-- Pie de página y Créditos -->
+        <p class="text-xs text-gray-400 mt-8 text-center">
+            Este servicio utiliza la API pública y gratuita de <a href="https://xposedornot.com/" target="_blank" class="hover:text-green-500 underline">XposedOrNot</a>.
+        </p>
+
+    </div>
+
+    <script>
+        // La URL pública y gratuita de la API de XposedOrNot
+        const XPOSED_API_URL = "https://exposedornot.com/api/v1/search";
+
+        // Función para validar el formato básico del email
+        function isValidEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        // Función principal para la búsqueda
+        async function checkBreaches() {
+            const emailInput = document.getElementById('emailInput');
+            const email = emailInput.value.trim();
+            const resultsDiv = document.getElementById('results');
+            const searchButton = document.getElementById('searchButton');
+            const buttonText = document.getElementById('buttonText');
+            const loader = document.getElementById('loader');
+
+            // Limpiar resultados anteriores
+            resultsDiv.innerHTML = '';
+
+            if (!isValidEmail(email)) {
+                displayMessage("⚠️ Por favor, introduce una dirección de correo electrónico válida.", 'bg-yellow-100 border-yellow-400 text-yellow-700');
+                return;
+            }
+            
+            // 1. Mostrar estado de carga
+            searchButton.disabled = true;
+            buttonText.textContent = 'Buscando...';
+            loader.classList.remove('hidden');
+
+            // Construir la URL de búsqueda
+            const searchUrl = `${XPOSED_API_URL}/${encodeURIComponent(email)}`;
+
+            try {
+                // 2. Realizar la solicitud a la API de XposedOrNot
+                const response = await fetch(searchUrl, {
+                    method: 'GET',
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+
+                const data = await response.json();
+
+                // 3. Manejar diferentes estados de respuesta
+                if (response.status === 200) {
+                    // XposedOrNot usa 'count' y 'breaches' en el resultado exitoso
+                    if (data.count > 0 && data.breaches && data.breaches.length > 0) {
+                        displayBreaches(email, data.breaches);
+                    } else {
+                        // El correo no está en ninguna brecha conocida.
+                        displayMessage(`🎉 ¡Buenas noticias! El correo electrónico <span class="font-bold">${email}</span> NO ha sido encontrado en ninguna brecha conocida por XposedOrNot.`, 'bg-green-100 border-green-400 text-green-700');
+                    }
+                } else {
+                    // Manejar errores de la API (generalmente se devuelve un JSON con un mensaje)
+                    const message = data.message || `Error ${response.status}: Ha ocurrido un error al consultar la API.`;
+                    displayMessage(`❌ Error: ${message}`, 'bg-red-100 border-red-400 text-red-700');
+                }
+
+            } catch (error) {
+                console.error("Error en la solicitud Fetch:", error);
+                displayMessage("❌ Error de red o en la solicitud. Revisa la consola para más detalles.", 'bg-red-100 border-red-400 text-red-700');
+            } finally {
+                // 4. Restaurar el botón
+                searchButton.disabled = false;
+                buttonText.textContent = 'Comprobar Brechas';
+                loader.classList.add('hidden');
+            }
+        }
+
+        // Función para mostrar mensajes simples (éxito/error/advertencia)
+        function displayMessage(message, classes) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="${classes} p-4 rounded-lg border-l-4 shadow-sm" role="alert">
+                    <p class="font-medium">${message}</p>
+                </div>
+            `;
+        }
+
+        // Función para renderizar las brechas encontradas (adaptada para XposedOrNot)
+        function displayBreaches(email, breaches) {
+            const resultsDiv = document.getElementById('results');
+            let html = `
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md mb-6" role="alert">
+                    <p class="font-bold text-lg">🚨 ¡ATENCIÓN! El correo <span class="font-extrabold">${email}</span> fue encontrado en ${breaches.length} brecha(s).</p>
+                    <p class="text-sm">Se recomienda encarecidamente cambiar la contraseña de inmediato y revisar si el mismo par de correo/contraseña ha sido utilizado en otros servicios.</p>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Detalles de las Brechas:</h2>
+            `;
+
+            breaches.forEach(breach => {
+                // XposedOrNot utiliza 'password' en Data_types si las contraseñas están expuestas
+                const dataTypes = breach.Data_types ? breach.Data_types.join(', ') : 'Desconocido';
+                const isSensitive = dataTypes.toLowerCase().includes("password");
+                const cardClass = isSensitive ? 'border-red-500 bg-red-50' : 'border-orange-500 bg-orange-50';
+                
+                // Formato de fecha
+                // La fecha viene en formato YYYY-MM-DD
+                const breachDate = breach.date_of_breach ? new Date(breach.date_of_breach + 'T00:00:00').toLocaleDateString() : 'Fecha Desconocida';
+                const description = breach.breach_info || 'Sin descripción disponible.';
+
+                html += `
+                    <div class="p-4 border-2 rounded-xl shadow-md ${cardClass}">
+                        <h3 class="font-bold text-xl text-gray-800 mb-1 flex justify-between items-center">
+                            <span>${breach.Name || 'Brecha Desconocida'}</span>
+                            ${isSensitive ? '<span class="text-sm bg-red-600 text-white px-2 py-0.5 rounded-full">¡Contraseñas!</span>' : ''}
+                        </h3>
+                        <p class="text-sm text-gray-500 mb-2">Dominio: <span class="font-medium">${breach.Domain || 'N/A'}</span></p>
+                        <p class="text-sm text-gray-500 mb-2">Fecha de la Brecha: <span class="font-medium">${breachDate}</span></p>
+                        <p class="text-gray-700 mt-3 text-sm">
+                            <span class="font-semibold">Datos Comprometidos:</span>
+                            ${dataTypes}
+                        </p>
+                        <p class="text-gray-600 mt-3 text-xs italic">${description}</p>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
