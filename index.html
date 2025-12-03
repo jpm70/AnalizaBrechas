@@ -216,7 +216,8 @@
     <script>
         // --- CONSTANTES GLOBALES ---
         const XPOSED_API_URL = "https://exposedornot.com/api/v1/search";
-        const IP_API_URL = "http://ip-api.com/json/";
+        // CORRECCIÓN: Se cambió de http a https para evitar el error de "Contenido Mixto"
+        const IP_API_URL = "https://ip-api.com/json/"; 
         const DOMAIN_API_URL = "https://www.whoisxmlapi.com/domain-name-availability/api/v1/lookup";
         const GOOGLE_DNS_API_URL = "https://dns.google/resolve";
 
@@ -550,6 +551,7 @@
             buttonText.textContent = 'Buscando...';
             loader.classList.remove('hidden');
 
+            // Se usa HTTPS para evitar errores de Contenido Mixto (Mixed Content)
             const searchUrl = `${IP_API_URL}${encodeURIComponent(ip)}`;
 
             try {
