@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis de Brechas con XposedOrNot</title>
+    <title>Herramienta de Seguridad Multifunción</title>
     <!-- Carga de Tailwind CSS para el estilo -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Carga de libphonenumber-js para validación de teléfonos -->
+    <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.11.3/bundle/libphonenumber-js.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -29,6 +31,11 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .tab-button.active {
+            background-color: #10b981; /* green-500 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4), 0 2px 4px -1px rgba(16, 185, 129, 0.2);
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 flex items-center justify-center min-h-screen bg-gray-100">
@@ -36,22 +43,52 @@
     <div id="app" class="container-card w-full bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">
             <svg class="inline w-8 h-8 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944c-.752 0-1.492.1-2.203.292m1.536 2.016h-3.072m3.072 0a2 2 0 100 4 2 2 0 000-4zM12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
-            Análisis de Brechas (XposedOrNot)
+            Herramienta de Seguridad y Validación
         </h1>
         <p class="text-center text-gray-500 mb-6">
-            Comprueba si una dirección de correo electrónico ha sido comprometida usando la API pública y gratuita de XposedOrNot.
+            Elige una opción para verificar información de seguridad.
         </p>
 
-        <!-- Formulario de Búsqueda -->
-        <div class="flex flex-col sm:flex-row gap-4 mb-6">
-            <input type="email" id="emailInput" placeholder="Introduce tu email aquí (ej: usuario@dominio.com)"
-                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                   required>
-            <button id="searchButton" onclick="checkBreaches()"
-                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center">
-                <span id="buttonText">Comprobar Brechas</span>
-                <div id="loader" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 hidden ml-2"></div>
+        <!-- Selector de Pestañas -->
+        <div class="flex justify-center mb-6 bg-gray-200 p-1 rounded-xl">
+            <button id="tabEmail" onclick="changeTab('email')" 
+                    class="tab-button active flex-1 p-3 text-sm font-semibold text-center rounded-lg transition duration-200 ease-in-out text-gray-700 hover:bg-green-500 hover:text-white">
+                📧 Chequeo de Brechas (Email)
             </button>
+            <button id="tabPhone" onclick="changeTab('phone')" 
+                    class="tab-button flex-1 p-3 text-sm font-semibold text-center rounded-lg transition duration-200 ease-in-out text-gray-700 hover:bg-green-500 hover:text-white">
+                📱 Validación de Teléfono
+            </button>
+        </div>
+
+        <!-- Contenido de la Pestaña de Email -->
+        <div id="tabContentEmail" data-tab-content="email">
+            <!-- Formulario de Búsqueda de Email -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <input type="email" id="emailInput" placeholder="Introduce email a comprobar (ej: usuario@dominio.com)"
+                       class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                       required>
+                <button id="searchButtonEmail" onclick="checkBreaches()"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center">
+                    <span id="buttonTextEmail">Comprobar Brechas</span>
+                    <div id="loaderEmail" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 hidden ml-2"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Contenido de la Pestaña de Teléfono -->
+        <div id="tabContentPhone" data-tab-content="phone" class="hidden">
+             <!-- Formulario de Validación de Teléfono -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <input type="tel" id="phoneInput" placeholder="Ej: +34 600 123 456 o 1 555 555 5555"
+                       class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                       required>
+                <button id="searchButtonPhone" onclick="checkPhone()"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center">
+                    <span id="buttonTextPhone">Validar Teléfono</span>
+                    <div id="loaderPhone" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 hidden ml-2"></div>
+                </button>
+            </div>
         </div>
 
         <!-- Área de Resultados -->
@@ -61,32 +98,73 @@
 
         <!-- Pie de página y Créditos -->
         <p class="text-xs text-gray-400 mt-8 text-center">
-            Este servicio utiliza la API pública y gratuita de <a href="https://xposedornot.com/" target="_blank" class="hover:text-green-500 underline">XposedOrNot</a>.
+            El servicio de brechas utiliza la API pública y gratuita de <a href="https://xposedornot.com/" target="_blank" class="hover:text-green-500 underline">XposedOrNot</a>. El servicio de teléfono usa la librería `libphonenumber-js`.
         </p>
 
     </div>
 
     <script>
-        // La URL pública y gratuita de la API de XposedOrNot
+        // --- CONSTANTES GLOBALES ---
         const XPOSED_API_URL = "https://exposedornot.com/api/v1/search";
 
-        // Función para validar el formato básico del email
+        // --- ESTADO DE LA APLICACIÓN ---
+        let currentTab = 'email';
+
+        // --- FUNCIONES DE UTILIDAD GENERAL ---
+
+        /**
+         * Cambia la pestaña visible y actualiza el estado de la aplicación.
+         * @param {string} tabName - 'email' o 'phone'.
+         */
+        function changeTab(tabName) {
+            currentTab = tabName;
+            
+            // 1. Ocultar todos los contenidos y desactivar botones
+            document.querySelectorAll('[data-tab-content]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            document.getElementById('results').innerHTML = ''; // Limpiar resultados
+
+            // 2. Mostrar contenido y activar el botón correcto
+            document.getElementById(`tabContent${capitalize(tabName)}`).classList.remove('hidden');
+            document.getElementById(`tab${capitalize(tabName)}`).classList.add('active');
+        }
+
+        /**
+         * Muestra un mensaje en el área de resultados.
+         * @param {string} message - El HTML del mensaje.
+         * @param {string} classes - Clases de Tailwind para el estilo del contenedor.
+         */
+        function displayMessage(message, classes) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="${classes} p-4 rounded-lg border-l-4 shadow-sm" role="alert">
+                    <p class="font-medium">${message}</p>
+                </div>
+            `;
+        }
+
+        /**
+         * Función auxiliar para capitalizar la primera letra de una cadena.
+         */
+        function capitalize(s) {
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        // --- FUNCIONES DE EMAIL (EXISTENTES) ---
+        
         function isValidEmail(email) {
             const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
         }
 
-        // Función principal para la búsqueda
         async function checkBreaches() {
             const emailInput = document.getElementById('emailInput');
             const email = emailInput.value.trim();
-            const resultsDiv = document.getElementById('results');
-            const searchButton = document.getElementById('searchButton');
-            const buttonText = document.getElementById('buttonText');
-            const loader = document.getElementById('loader');
+            const searchButton = document.getElementById('searchButtonEmail');
+            const buttonText = document.getElementById('buttonTextEmail');
+            const loader = document.getElementById('loaderEmail');
 
-            // Limpiar resultados anteriores
-            resultsDiv.innerHTML = '';
+            document.getElementById('results').innerHTML = '';
 
             if (!isValidEmail(email)) {
                 displayMessage("⚠️ Por favor, introduce una dirección de correo electrónico válida.", 'bg-yellow-100 border-yellow-400 text-yellow-700');
@@ -98,31 +176,25 @@
             buttonText.textContent = 'Buscando...';
             loader.classList.remove('hidden');
 
-            // Construir la URL de búsqueda
             const searchUrl = `${XPOSED_API_URL}/${encodeURIComponent(email)}`;
 
             try {
                 // 2. Realizar la solicitud a la API de XposedOrNot
                 const response = await fetch(searchUrl, {
                     method: 'GET',
-                    headers: {
-                        "Accept": "application/json"
-                    }
+                    headers: { "Accept": "application/json" }
                 });
 
                 const data = await response.json();
 
                 // 3. Manejar diferentes estados de respuesta
                 if (response.status === 200) {
-                    // XposedOrNot usa 'count' y 'breaches' en el resultado exitoso
                     if (data.count > 0 && data.breaches && data.breaches.length > 0) {
                         displayBreaches(email, data.breaches);
                     } else {
-                        // El correo no está en ninguna brecha conocida.
                         displayMessage(`🎉 ¡Buenas noticias! El correo electrónico <span class="font-bold">${email}</span> NO ha sido encontrado en ninguna brecha conocida por XposedOrNot.`, 'bg-green-100 border-green-400 text-green-700');
                     }
                 } else {
-                    // Manejar errores de la API (generalmente se devuelve un JSON con un mensaje)
                     const message = data.message || `Error ${response.status}: Ha ocurrido un error al consultar la API.`;
                     displayMessage(`❌ Error: ${message}`, 'bg-red-100 border-red-400 text-red-700');
                 }
@@ -138,17 +210,6 @@
             }
         }
 
-        // Función para mostrar mensajes simples (éxito/error/advertencia)
-        function displayMessage(message, classes) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <div class="${classes} p-4 rounded-lg border-l-4 shadow-sm" role="alert">
-                    <p class="font-medium">${message}</p>
-                </div>
-            `;
-        }
-
-        // Función para renderizar las brechas encontradas (adaptada para XposedOrNot)
         function displayBreaches(email, breaches) {
             const resultsDiv = document.getElementById('results');
             let html = `
@@ -160,13 +221,10 @@
             `;
 
             breaches.forEach(breach => {
-                // XposedOrNot utiliza 'password' en Data_types si las contraseñas están expuestas
                 const dataTypes = breach.Data_types ? breach.Data_types.join(', ') : 'Desconocido';
                 const isSensitive = dataTypes.toLowerCase().includes("password");
                 const cardClass = isSensitive ? 'border-red-500 bg-red-50' : 'border-orange-500 bg-orange-50';
                 
-                // Formato de fecha
-                // La fecha viene en formato YYYY-MM-DD
                 const breachDate = breach.date_of_breach ? new Date(breach.date_of_breach + 'T00:00:00').toLocaleDateString() : 'Fecha Desconocida';
                 const description = breach.breach_info || 'Sin descripción disponible.';
 
@@ -189,6 +247,58 @@
 
             resultsDiv.innerHTML = html;
         }
+
+
+        // --- FUNCIONES DE TELÉFONO (NUEVAS) ---
+
+        /**
+         * Valida y analiza un número de teléfono usando libphonenumber-js.
+         */
+        function checkPhone() {
+            const phoneInput = document.getElementById('phoneInput');
+            const number = phoneInput.value.trim();
+            const resultsDiv = document.getElementById('results');
+
+            resultsDiv.innerHTML = '';
+
+            if (number === '') {
+                displayMessage("⚠️ Por favor, introduce un número de teléfono.", 'bg-yellow-100 border-yellow-400 text-yellow-700');
+                return;
+            }
+
+            try {
+                // Intenta analizar el número. No se proporciona un país por defecto para forzar el formato E.164 (+CC)
+                const phoneNumber = libphonenumber.parsePhoneNumberFromString(number);
+
+                if (phoneNumber && phoneNumber.isValid()) {
+                    let html = `
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-md mb-6" role="alert">
+                            <p class="font-bold text-lg">✅ ¡Validación Exitosa!</p>
+                            <p class="text-sm">El número de teléfono parece ser estructuralmente válido.</p>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4">Detalles del Número:</h2>
+                        <div class="bg-white p-4 rounded-xl shadow border border-gray-200 space-y-2">
+                            <p><strong>Formato Internacional:</strong> <span class="font-mono text-gray-800">${phoneNumber.formatInternational()}</span></p>
+                            <p><strong>Código de País:</strong> ${phoneNumber.countryCallingCode} (<span class="font-medium">${phoneNumber.country}</span>)</p>
+                            <p><strong>Tipo de Número:</strong> <span class="font-medium">${phoneNumber.getType() ? capitalize(phoneNumber.getType()) : 'Desconocido'}</span></p>
+                            <p><strong>Posible Origen Geográfico:</strong> ${libphonenumber.getExampleNumber(phoneNumber.country)?.getPossibleCountries().join(', ') || 'No disponible'}</p>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-4 italic">Nota: Esta es una validación de formato (sintáctica y geográfica), no comprueba si el número está activo o si está comprometido en brechas de datos.</p>
+                    `;
+                    resultsDiv.innerHTML = html;
+                } else {
+                    displayMessage(`❌ El número <span class="font-bold">${number}</span> no es un número de teléfono válido o no se pudo determinar su país. Asegúrate de incluir el código de país (ej. +34).`, 'bg-red-100 border-red-400 text-red-700');
+                }
+            } catch (e) {
+                console.error("Error al procesar el número:", e);
+                displayMessage(`❌ Error al procesar el número. Asegúrate de incluir el código de país (ej. +34).`, 'bg-red-100 border-red-400 text-red-700');
+            }
+        }
+
+        // Inicializar la aplicación al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            changeTab('email'); // Asegura que la pestaña de email esté activa por defecto
+        });
     </script>
 </body>
 </html>
