@@ -315,19 +315,25 @@
                 });
                 const data = await response.json();
 
+                // 🛑 CORRECCIÓN CLAVE: Normalizar la respuesta. 
+                // Si la data es un array, es el array de brechas. Si no, es un objeto de error o el 404 simulado.
+                // Nos aseguramos de que sea un array para poder contar.
+                const breachesArray = Array.isArray(data) ? data : []; 
+
+
                 if (response.status === 200) {
-                    if (data.count > 0 && data.breaches && data.breaches.length > 0) {
-                        displayBreaches(email, data.breaches);
-                    } else if (data.status === 404) {
-                        // Manejo si el proxy devuelve un 404 (o el API real)
+                    if (breachesArray.length > 0) {
+                        // CASO 1: Brechas ENCONTRADAS (El array normalizado tiene contenido)
+                        displayBreaches(email, breachesArray);
+                    } else if (data.status === 404 || breachesArray.length === 0) {
+                        // CASO 2: Brechas NO ENCONTRADAS (404 simulado desde el proxy, o array vacío)
                         displayMessage(`🎉 ¡Buenas noticias! El correo electrónico <span class="font-bold">${email}</span> NO ha sido encontrado en ninguna brecha conocida por XposedOrNot.`, 'bg-green-100 border-green-400 text-green-700');
-                    }
-                     else {
-                         // Manejo general si no hay brechas y el status es 200
+                    } else {
+                        // CASO 3: Fallback por si la estructura del 200 es inesperada
                         displayMessage(`🎉 ¡Buenas noticias! El correo electrónico <span class="font-bold">${email}</span> NO ha sido encontrado en ninguna brecha conocida por XposedOrNot.`, 'bg-green-100 border-green-400 text-green-700');
                     }
                 } else {
-                    // Si el proxy falla o devuelve otro error (500, etc.)
+                    // Si el proxy falla o devuelve otro error (500, 502, etc.)
                     const message = data.error || data.message || `Error ${response.status}: Ha ocurrido un error al consultar el proxy de la API.`;
                     displayMessage(`❌ Error: ${message}`, 'bg-red-100 border-red-400 text-red-700');
                 }
@@ -852,4 +858,3 @@
     </script>
 </body>
 </html>
-
