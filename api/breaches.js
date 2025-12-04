@@ -1,10 +1,13 @@
-// api/breaches.js (Código CORREGIDO para resolver el 404)
+// api/breaches.js (Versión Final Corregida y Robustecida)
 
+// La URL base de la API externa.
 const XPOSED_API_URL = "https://exposedornot.com/api/v1/search";
 
 export default async (req, res) => {
     
-    // Configuración CORS
+    // =======================================================
+    // 1. Configuración CORS y manejo de peticiones OPTIONS
+    // =======================================================
     res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -13,16 +16,19 @@ export default async (req, res) => {
         return res.status(200).end();
     }
     
+    // 2. Obtener el email del parámetro de consulta
     const { email } = req.query; 
 
     if (!email) {
         return res.status(400).json({ error: "Missing email parameter" });
     }
 
-    // 🛑 ¡LÍNEA CORREGIDA! Se cambia de usar un slash (/) a usar un parámetro de consulta (?q=)
-    const searchUrl = `${XPOSED_API_URL}?q=${encodeURIComponent(email)}`; 
+    // 🛑 CORRECCIÓN CLAVE: Usamos el parámetro de consulta '?email='
+    // para resolver el error 404.
+    const searchUrl = `${XPOSED_API_URL}?email=${encodeURIComponent(email)}`; 
 
     try {
+        // 3. Petición al API externo (desde Vercel)
         const response = await fetch(searchUrl, {
             method: 'GET',
             headers: { 
@@ -30,27 +36,26 @@ export default async (req, res) => {
             }
         });
         
-        // 🛑 PASO 1: Capturar la respuesta como texto para diagnóstico
         const responseBody = await response.text(); 
         
-        // 🛑 PASO 2: Verificar si la respuesta fue exitosa (código 200)
+        // 4. Verificación de respuesta exitosa (response.ok = código 200-299)
         if (!response.ok) {
-            // Si la API externa devuelve un código de error (40x, 50x)
+            // Si la API externa devuelve un error HTTP (4xx, 5xx),
+            // lo devolvemos al frontend con un código 502 (Bad Gateway)
             console.error(`External API returned status ${response.status}: ${responseBody.substring(0, 100)}`);
             
-            // Devolver un error específico para diagnóstico en el frontend
             return res.status(502).json({ 
                 error: `External API returned status ${response.status}.`,
-                external_message: responseBody.substring(0, 500) // Mostrar el mensaje de error que da la API externa
+                external_message: responseBody.substring(0, 500)
             });
         }
         
-        // 🛑 PASO 3: Intentar parsear el JSON solo si response.ok es true
+        // 5. Intentar parsear el JSON
         let data;
         try {
             data = JSON.parse(responseBody);
         } catch (jsonError) {
-             // Fallo en el parseo JSON, aunque la respuesta fue 200
+             // Fallo en el parseo JSON
              console.error("JSON Parsing Error:", jsonError);
              return res.status(500).json({ 
                 error: "Proxy received valid status but invalid JSON response.",
@@ -58,10 +63,11 @@ export default async (req, res) => {
             });
         }
         
+        // 6. Devolver la respuesta exitosa al frontend
         res.status(response.status).json(data);
 
     } catch (error) {
-        // Fallo de red (timeout, DNS, SSL, etc.)
+        // Fallo de red (timeout, DNS, SSL)
         console.error("Proxy Network/Execution Error:", error);
         res.status(500).json({ error: "Proxy failed to execute the request or network error occurred." });
     }
