@@ -1,25 +1,17 @@
-// api/breaches.js (Código CORREGIDO para Vercel)
+// api/breaches.js (Código de Diagnóstico Final)
 
-// 🛑 IMPORTANTE: Eliminamos 'import fetch from "node-fetch";'
-// y usamos el 'fetch' nativo de Node.js, que Vercel soporta.
-
-// La API real de brechas.
 const XPOSED_API_URL = "https://exposedornot.com/api/v1/search";
 
 export default async (req, res) => {
     
-    // =======================================================
-    // 🛑 Encabezados CORS y manejo de OPTIONS
-    // =======================================================
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Permitir acceso desde cualquier origen
+    // Configuración CORS
+    res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
-        // Manejar la petición "preflight"
         return res.status(200).end();
     }
-    // =======================================================
     
     const { email } = req.query; 
 
@@ -30,7 +22,6 @@ export default async (req, res) => {
     const searchUrl = `${XPOSED_API_URL}/${encodeURIComponent(email)}`;
 
     try {
-        // Usamos el fetch global (nativo) de Node
         const response = await fetch(searchUrl, {
             method: 'GET',
             headers: { 
@@ -38,12 +29,39 @@ export default async (req, res) => {
             }
         });
         
-        const data = await response.json();
-        // Devolvemos el status code que la API real nos dio (200 o 404, etc.)
+        // 🛑 PASO 1: Capturar la respuesta como texto para diagnóstico
+        const responseBody = await response.text(); 
+        
+        // 🛑 PASO 2: Verificar si la respuesta fue exitosa (código 200)
+        if (!response.ok) {
+            // Si la API externa devuelve un código de error (40x, 50x)
+            console.error(`External API returned status ${response.status}: ${responseBody.substring(0, 100)}`);
+            
+            // Devolver un error específico para diagnóstico en el frontend
+            return res.status(502).json({ 
+                error: `External API returned status ${response.status}.`,
+                external_message: responseBody.substring(0, 500) // Mostrar el mensaje de error que da la API externa
+            });
+        }
+        
+        // 🛑 PASO 3: Intentar parsear el JSON solo si response.ok es true
+        let data;
+        try {
+            data = JSON.parse(responseBody);
+        } catch (jsonError) {
+             // Fallo en el parseo JSON, aunque la respuesta fue 200
+             console.error("JSON Parsing Error:", jsonError);
+             return res.status(500).json({ 
+                error: "Proxy received valid status but invalid JSON response.",
+                raw_response_start: responseBody.substring(0, 500)
+            });
+        }
+        
         res.status(response.status).json(data);
 
     } catch (error) {
-        console.error("Proxy Runtime Error:", error);
-        res.status(500).json({ error: "Internal Proxy Error while executing function." });
+        // Fallo de red (timeout, DNS, SSL, etc.)
+        console.error("Proxy Network/Execution Error:", error);
+        res.status(500).json({ error: "Proxy failed to execute the request or network error occurred." });
     }
 };
