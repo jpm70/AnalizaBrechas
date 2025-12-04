@@ -1,15 +1,14 @@
-// api/breaches.js (Versión para Have I Been Pwned - HIBP)
+// api/breaches.js (Versión para HackCheck)
 
-// La URL de la API de HIBP (Requiere que el email esté en el PATH)
-const HIBP_API_URL = "https://haveibeenpwned.com/api/v3/breachedaccount/";
+// La URL de la API de HackCheck (endpoint anónimo)
+const HACKCHECK_API_URL = "https://haveibeenhacked.com/api/v1/search";
 
 export default async (req, res) => {
     
-    // ... (Configuración CORS y manejo de OPTIONS: Esto se mantiene igual)
+    // Configuración CORS
     res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Content-Type', 'application/json'); // Aseguramos que la respuesta es JSON
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
@@ -21,31 +20,32 @@ export default async (req, res) => {
         return res.status(400).json({ error: "Missing email parameter" });
     }
 
-    // 🛑 CAMBIO CLAVE: Construcción de la URL de HIBP
-    const searchUrl = `${HIBP_API_URL}${encodeURIComponent(email)}?truncateResponse=true`; 
+    // 🛑 Construcción de la URL de HackCheck: utiliza el email como parámetro de consulta
+    const searchUrl = `${HACKCHECK_API_URL}?q=${encodeURIComponent(email)}`; 
 
     try {
-        // Petición al API de HIBP (desde Vercel)
+        // Petición al API de HackCheck (desde Vercel)
         const response = await fetch(searchUrl, {
             method: 'GET',
             headers: { 
-                "User-Agent": "TrustWatch-App-Proxy", // HIBP requiere un User-Agent identificable
                 "Accept": "application/json",
             }
         });
         
-        // La API de HIBP usa 404 para NO ENCONTRADO (lo cual es un ÉXITO)
+        const responseBody = await response.text(); 
+        
+        // La API de HackCheck devuelve 200 si tiene datos o 404 si no encuentra nada.
+
         if (response.status === 404) {
+             // 404 en esta API es un éxito, significa que no se encontraron brechas.
              return res.status(200).json({ status: 404, message: "Email not found in breaches." });
         }
         
-        const responseBody = await response.text(); 
-        
         if (response.status !== 200) {
-            // Si devuelve cualquier otro código (ej. 400, 403, 429), es un error real.
-            console.error(`HIBP API returned status ${response.status}`);
+            // Si devuelve cualquier otro código (ej. 403, 500, etc.), es un error real.
+            console.error(`HackCheck API returned status ${response.status}`);
             return res.status(502).json({ 
-                error: `HIBP API returned status ${response.status}.`,
+                error: `HackCheck API returned status ${response.status}.`,
                 external_message: responseBody.substring(0, 500)
             });
         }
