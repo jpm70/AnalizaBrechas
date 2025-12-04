@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herramienta de Seguridad y Utilidades (7 en 1)</title>
+    <title>Herramienta de Seguridad y Utilidades (8 en 1)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.11.3/bundle/libphonenumber-js.min.js"></script>
@@ -13,7 +13,7 @@
             background-color: #f7fafc; /* Gris muy claro */
         }
         .container-card {
-            max-width: 900px; /* Más ancho para acomodar 7 pestañas */
+            max-width: 900px; /* Más ancho para acomodar 8 pestañas */
         }
         /* Estilos para el indicador de carga */
         .loader {
@@ -40,7 +40,7 @@
     <div id="app" class="container-card w-full bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">
             <svg class="inline w-8 h-8 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944c-.752 0-1.492.1-2.203.292m1.536 2.016h-3.072m3.072 0a2 2 0 100 4 2 2 0 000-4zM12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
-            Herramienta de Seguridad y Utilidades (7 en 1)
+            Herramienta de Seguridad y Utilidades (8 en 1)
         </h1>
         <p class="text-center text-gray-500 mb-6">
             Elige una opción para verificar información de seguridad, red y credenciales.
@@ -73,6 +73,10 @@
             <button id="tabSafe" onclick="changeTab('safe')" 
                     class="tab-button flex-1 p-2 text-xs sm:text-sm font-semibold text-center rounded-lg transition duration-200 ease-in-out text-gray-700 hover:bg-green-500 hover:text-white min-w-[33%] sm:min-w-0">
                 🛡️ Seguridad Web
+            </button>
+            <button id="tabHeaders" onclick="changeTab('headers')" 
+                    class="tab-button flex-1 p-2 text-xs sm:text-sm font-semibold text-center rounded-lg transition duration-200 ease-in-out text-gray-700 hover:bg-green-500 hover:text-white min-w-[33%] sm:min-w-0">
+                🔒 Cabeceras HTTP
             </button>
         </div>
         
@@ -194,10 +198,23 @@
                 </button>
             </div>
         </div>
+        
+        <div id="tabContentHeaders" data-tab-content="headers" class="hidden">
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <input type="url" id="headersInput" placeholder="Introduce la URL para escanear cabeceras (ej: https://facebook.com)"
+                       class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                       required>
+                <button id="searchButtonHeaders" onclick="checkSecurityHeaders()"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center">
+                    <span id="buttonTextHeaders">Escanear Cabeceras</span>
+                    <div id="loaderHeaders" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 hidden ml-2"></div>
+                </button>
+            </div>
+        </div>
         <div id="results" class="space-y-4">
             </div>
         <p class="text-xs text-gray-400 mt-8 text-center">
-            **Servicios externos gratuitos:** Brechas (Proxy Vercel), Seguridad Web (Proxy Vercel/Google Safe Browsing), IP (ipapi.co), DNS (Google Public DNS). Teléfono y Contraseñas (Client-side JS).
+            **Servicios externos gratuitos:** Brechas (Proxy Vercel), Seguridad Web (Proxy Vercel/Google Safe Browsing), Cabeceras HTTP (Proxy Vercel/Node.js Fetch), IP (ipapi.co), DNS (Google Public DNS). Teléfono y Contraseñas (Client-side JS).
             <span class="font-bold text-red-400">La disponibilidad de Dominio se verifica solo a nivel de formato por las restricciones de CORS/API Key.</span>
         </p>
     </div>
@@ -206,8 +223,10 @@
         
         // ¡CAMBIO CLAVE! URL del proxy serverless para evitar el error CORS.
         const PROXY_BREACHES_URL = "https://trust-watch.vercel.app/api/breaches?email=";
-        // ✅ NUEVO: URL del proxy para la comprobación de Navegación Segura
+        // ✅ URL del proxy para la comprobación de Navegación Segura
         const PROXY_SAFE_URL = "https://trust-watch.vercel.app/api/safebrowsing"; 
+        // ✅ NUEVO: URL del proxy para el escaneo de cabeceras
+        const PROXY_HEADERS_URL = "https://trust-watch.vercel.app/api/headers"; 
 
         const IP_API_URL = "https://ipapi.co/"; 
         const GOOGLE_DNS_API_URL = "https://dns.google/resolve";
@@ -225,7 +244,7 @@
 
         /**
          * Cambia la pestaña visible y actualiza el estado de la aplicación.
-         * @param {string} tabName - 'email', 'phone', 'domain', 'ip', 'dns', 'password' o 'safe'.
+         * @param {string} tabName - 'email', 'phone', 'domain', 'ip', 'dns', 'password', 'safe' o 'headers'.
          */
         function changeTab(tabName) {
             console.log(`[DEBUG] Intentando cambiar a la pestaña: ${tabName}`);
@@ -241,8 +260,8 @@
             }
 
             // 2. Mostrar contenido y activar el botón correcto
-            // Se debe manejar 'Safe' y 'safe'
-            const capitalizedName = (tabName === 'safe') ? 'Safe' : capitalize(tabName); 
+            // Se debe manejar 'Safe' y 'safe', y 'Headers' y 'headers'
+            const capitalizedName = (tabName === 'safe' || tabName === 'headers') ? capitalize(tabName) : capitalize(tabName); 
             const contentDiv = document.getElementById(`tabContent${capitalizedName}`);
             const buttonEl = document.getElementById(`tab${capitalizedName}`);
             if (contentDiv) {
@@ -933,6 +952,128 @@
                     **Clasificaciones:** MALWARE (Software malicioso), SOCIAL_ENGINEERING (Phishing/Engaño), UNWANTED_SOFTWARE (Software no deseado).
                 </p>
             `;
+            if (resultsDiv) resultsDiv.innerHTML = html;
+        }
+
+        // ----------------------------------------------------------------------
+        // --- FUNCIONES DE CABECERAS HTTP (SECURITY HEADERS) ---
+        // ----------------------------------------------------------------------
+
+        async function checkSecurityHeaders() {
+            const headersInput = document.getElementById('headersInput');
+            const url = headersInput ? headersInput.value.trim() : '';
+            const searchButton = document.getElementById('searchButtonHeaders');
+            const buttonText = document.getElementById('buttonTextHeaders');
+            const loader = document.getElementById('loaderHeaders');
+            document.getElementById('results').innerHTML = '';
+
+            if (!isValidUrl(url)) {
+                displayMessage("⚠️ Por favor, introduce una URL válida (ej: https://www.ejemplo.com).", 'bg-yellow-100 border-yellow-400 text-yellow-700');
+                return;
+            }
+            
+            if (searchButton) searchButton.disabled = true;
+            if (buttonText) buttonText.textContent = 'Escaneando...';
+            if (loader) loader.classList.remove('hidden');
+
+            try {
+                // Usamos GET y la URL como query parameter
+                const searchUrl = `${PROXY_HEADERS_URL}?url=${encodeURIComponent(url)}`;
+                
+                const response = await fetch(searchUrl, {
+                    method: 'GET',
+                    headers: { "Accept": "application/json" }
+                });
+                const data = await response.json();
+
+                if (response.ok && data.results) {
+                    displayHeadersResults(data);
+                } else {
+                    const message = data.error || `Error ${response.status}: Error al escanear cabeceras.`;
+                    displayMessage(`❌ Error: ${message}`, 'bg-red-100 border-red-400 text-red-700');
+                }
+            } catch (error) {
+                console.error("Error en la solicitud Fetch (Headers/Proxy):", error);
+                displayMessage(`❌ Error de Conexión. Fallo al contactar el servicio Proxy para cabeceras HTTP.`, 'bg-red-100 border-red-400 text-red-700');
+            } finally {
+                if (searchButton) searchButton.disabled = false;
+                if (buttonText) buttonText.textContent = 'Escanear Cabeceras';
+                if (loader) loader.classList.add('hidden');
+            }
+        }
+
+        function displayHeadersResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const urlChecked = data.url;
+            const score = data.score;
+            const results = data.results;
+
+            let scoreClass = 'bg-red-500';
+            let scoreText = 'BAJA';
+
+            if (score >= 90) { scoreClass = 'bg-green-600'; scoreText = 'EXCELENTE'; }
+            else if (score >= 70) { scoreClass = 'bg-yellow-600'; scoreText = 'BUENA'; }
+            else if (score >= 50) { scoreClass = 'bg-orange-500'; scoreText = 'MEDIA'; }
+            // Si es menor de 50, se queda en roja.
+
+            let html = `
+                <div class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-lg shadow-md mb-6" role="alert">
+                    <p class="font-bold text-lg">🔒 Escaneo de Cabeceras HTTP</p>
+                    <p class="text-sm">URL Verificada: <span class="font-extrabold">${urlChecked}</span></p>
+                </div>
+                
+                <div class="p-4 rounded-lg shadow-lg mb-6 flex flex-col sm:flex-row items-center justify-between border border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-700">Puntuación de Seguridad:</h2>
+                    <div class="flex items-center mt-2 sm:mt-0">
+                        <span class="text-3xl font-bold mr-3">${score}%</span>
+                        <span class="py-1 px-3 rounded-full text-white font-semibold text-sm ${scoreClass}">${scoreText}</span>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Detalles de las Cabeceras:</h2>
+                <div class="space-y-4">
+            `;
+
+            // Función auxiliar para colorear la fila
+            const getRowColor = (status) => {
+                if (status === 'PRESENT') return 'bg-green-50 text-green-700 border-green-200';
+                if (status === 'MISSING') return 'bg-red-50 text-red-700 border-red-200';
+                if (status === 'MISCONFIGURED') return 'bg-orange-50 text-orange-700 border-orange-200';
+                return 'bg-gray-50 text-gray-600 border-gray-200';
+            };
+            
+            // Función auxiliar para iconos
+            const getIcon = (status) => {
+                if (status === 'PRESENT') return '✅';
+                if (status === 'MISSING') return '❌';
+                if (status === 'MISCONFIGURED') return '⚠️';
+                return 'ℹ️';
+            };
+
+            // Recorrer los resultados
+            for (const [key, result] of Object.entries(results)) {
+                html += `
+                    <div class="p-4 rounded-xl shadow-sm ${getRowColor(result.status)} border">
+                        <p class="font-bold text-lg">${getIcon(result.status)} ${key}</p>
+                        <p class="text-sm mt-1">
+                            ${result.status === 'MISSING' 
+                                ? '<span class="font-bold">ESTADO: FALTANTE.</span> Esto reduce la seguridad del sitio.'
+                                : result.status === 'MISCONFIGURED' 
+                                ? '<span class="font-bold">ESTADO: MAL CONFIGURADA.</span> Se recomienda corrección inmediata.'
+                                : result.status === 'OPTIONAL_MISSING'
+                                ? '<span class="font-bold">ESTADO: OPCIONAL FALTANTE.</span> Recomendado para máxima seguridad.'
+                                : '<span class="font-bold">ESTADO: CORRECTO.</span>'
+                            }
+                        </p>
+                        <p class="text-xs italic mt-1">${result.description}</p>
+                        <div class="mt-2 p-2 bg-white rounded border border-gray-300 overflow-x-auto text-sm font-mono text-gray-800">
+                            ${result.value}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
             if (resultsDiv) resultsDiv.innerHTML = html;
         }
 
