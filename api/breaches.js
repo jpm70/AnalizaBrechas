@@ -1,4 +1,4 @@
-// api/breaches.js (Código de Diagnóstico Final)
+// api/breaches.js (Código CORREGIDO para resolver el 404)
 
 const XPOSED_API_URL = "https://exposedornot.com/api/v1/search";
 
@@ -19,7 +19,8 @@ export default async (req, res) => {
         return res.status(400).json({ error: "Missing email parameter" });
     }
 
-    const searchUrl = `${XPOSED_API_URL}/${encodeURIComponent(email)}`;
+    // 🛑 ¡LÍNEA CORREGIDA! Se cambia de usar un slash (/) a usar un parámetro de consulta (?q=)
+    const searchUrl = `${XPOSED_API_URL}?q=${encodeURIComponent(email)}`; 
 
     try {
         const response = await fetch(searchUrl, {
