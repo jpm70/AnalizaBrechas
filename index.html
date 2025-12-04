@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herramienta de Seguridad Multifunción (6 en 1)</title>
-    <!-- Carga de Tailwind CSS para el estilo -->
+    <title>Herramienta de Seguridad y Utilidades (6 en 1)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Carga de libphonenumber-js para validación de teléfonos -->
     <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.11.3/bundle/libphonenumber-js.min.js"></script>
     <style>
         body {
@@ -39,7 +37,6 @@
     </style>
 </head>
 <body class="p-4 md:p-8 flex items-center justify-center min-h-screen bg-gray-100">
-
     <div id="app" class="container-card w-full bg-white p-6 md:p-10 rounded-xl shadow-2xl border border-gray-200">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">
             <svg class="inline w-8 h-8 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944c-.752 0-1.492.1-2.203.292m1.536 2.016h-3.072m3.072 0a2 2 0 100 4 2 2 0 000-4zM12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
@@ -48,8 +45,6 @@
         <p class="text-center text-gray-500 mb-6">
             Elige una opción para verificar información de seguridad, red y credenciales.
         </p>
-
-        <!-- Selector de Pestañas -->
         <div class="flex flex-wrap justify-center mb-6 bg-gray-200 p-1 rounded-xl">
             <button id="tabEmail" onclick="changeTab('email')" 
                     class="tab-button active flex-1 p-2 text-xs sm:text-sm font-semibold text-center rounded-lg transition duration-200 ease-in-out text-gray-700 hover:bg-green-500 hover:text-white min-w-[33%] sm:min-w-0">
@@ -76,10 +71,6 @@
                 🔑 Contraseña
             </button>
         </div>
-
-        <!-- Contenido de las Pestañas -->
-        
-        <!-- Pestaña: Email (Brechas) -->
         <div id="tabContentEmail" data-tab-content="email">
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <input type="email" id="emailInput" placeholder="Introduce email a comprobar (ej: usuario@dominio.com)"
@@ -92,8 +83,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Pestaña: Teléfono (Validación) -->
         <div id="tabContentPhone" data-tab-content="phone" class="hidden">
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <input type="tel" id="phoneInput" placeholder="Ej: +34 600 123 456 (incluye código de país)"
@@ -106,9 +95,7 @@
                 </button>
             </div>
         </div>
-        
-        <!-- Pestaña: Dominio (Información) -->
-        <div id="tabContentDomain" data-tab-content="domain" class="hidden">
+                <div id="tabContentDomain" data-tab-content="domain" class="hidden">
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <input type="text" id="domainInput" placeholder="Introduce el dominio (ej: google.com)"
                        class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -120,9 +107,7 @@
                 </button>
             </div>
         </div>
-        
-        <!-- Pestaña: IP (Geolocalización) -->
-        <div id="tabContentIP" data-tab-content="ip" class="hidden">
+                <div id="tabContentIP" data-tab-content="ip" class="hidden">
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <input type="text" id="ipInput" placeholder="Introduce IP (ej: 8.8.8.8) o déjalo vacío para la tuya"
                        class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -133,15 +118,13 @@
                 </button>
             </div>
         </div>
-
-        <!-- Pestaña: DNS Lookup -->
         <div id="tabContentDns" data-tab-content="dns" class="hidden">
             <div class="flex flex-col sm:flex-row gap-4 mb-6">
                 <input type="text" id="dnsInput" placeholder="Introduce el dominio (ej: ejemplo.com)"
                        class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 flex-grow"
                        required>
-                <select id="dnsTypeSelect" 
-                        class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-auto">
+                <select id="dnsTypeSelect"
+                         class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-auto">
                     <option value="A">A (Dirección IPv4)</option>
                     <option value="AAAA">AAAA (Dirección IPv6)</option>
                     <option value="MX">MX (Servidor de Correo)</option>
@@ -156,13 +139,9 @@
                 </button>
             </div>
         </div>
-
-        <!-- Pestaña: Contraseña (Generador/Fuerza) -->
         <div id="tabContentPassword" data-tab-content="password" class="hidden">
             <div class="space-y-6">
-                
-                <!-- Generador de Contraseña -->
-                <div class="p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-inner">
+                                <div class="p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-inner">
                     <h2 class="text-xl font-semibold text-gray-700 mb-4">Generador de Contraseñas Seguras</h2>
                     <div class="flex flex-col md:flex-row gap-4 mb-4 items-center">
                         <input type="number" id="passLength" value="16" min="8" max="64"
@@ -185,8 +164,6 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Evaluador de Fuerza -->
                 <div class="p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-inner">
                     <h2 class="text-xl font-semibold text-gray-700 mb-4">Evaluador de Fuerza de Contraseña</h2>
                     <input type="password" id="passwordStrengthInput" placeholder="Introduce tu contraseña para verificar su fuerza"
@@ -197,35 +174,25 @@
                     </div>
                     <p id="strengthText" class="text-sm font-semibold text-gray-600"></p>
                 </div>
-
             </div>
         </div>
-
-        <!-- Área de Resultados -->
         <div id="results" class="space-y-4">
-            <!-- Los resultados se inyectarán aquí -->
-        </div>
-
-        <!-- Pie de página y Créditos -->
+            </div>
         <p class="text-xs text-gray-400 mt-8 text-center">
             **Servicios externos gratuitos:** Brechas (XposedOrNot), IP (ipapi.co), DNS (Google Public DNS). Teléfono y Contraseñas (Client-side JS).
             <span class="font-bold text-red-400">La disponibilidad de Dominio se verifica solo a nivel de formato por las restricciones de CORS/API Key.</span>
         </p>
-
     </div>
-
     <script>
         // --- CONSTANTES GLOBALES ---
         const XPOSED_API_URL = "https://exposedornot.com/api/v1/search";
         // CAMBIO CRÍTICO: Se cambia de ipwhois.app a ipapi.co (más confiable para entornos CORS restringidos)
         const IP_API_URL = "https://ipapi.co/"; 
         const GOOGLE_DNS_API_URL = "https://dns.google/resolve";
-
         // --- ESTADO DE LA APLICACIÓN ---
         let currentTab = 'email';
 
         // --- FUNCIONES DE UTILIDAD GENERAL ---
-
         /**
          * Función auxiliar para capitalizar la primera letra de una cadena, manejando acrónimos.
          */
@@ -241,11 +208,11 @@
         function changeTab(tabName) {
             console.log(`[DEBUG] Intentando cambiar a la pestaña: ${tabName}`);
             currentTab = tabName;
-            
+                        
             // 1. Ocultar todos los contenidos y desactivar botones
             document.querySelectorAll('[data-tab-content]').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
-            
+                        
             const resultsDiv = document.getElementById('results');
             if (resultsDiv) {
                 resultsDiv.innerHTML = ''; // Limpiar resultados
@@ -255,14 +222,13 @@
             const capitalizedName = capitalize(tabName); // Usa la función corregida
             const contentDiv = document.getElementById(`tabContent${capitalizedName}`);
             const buttonEl = document.getElementById(`tab${capitalizedName}`);
-
             if (contentDiv) {
                 contentDiv.classList.remove('hidden');
                 console.log(`[DEBUG] Pestaña ${tabName} mostrada. ID del contenido: tabContent${capitalizedName}`);
             } else {
                 console.warn(`[DOM Warning] No se encontró el contenido para la pestaña: tabContent${capitalizedName}`);
             }
-            
+                        
             if (buttonEl) {
                 buttonEl.classList.add('active');
             } else {
@@ -292,13 +258,13 @@
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             if (!element) return;
-            
+                        
             // Crea un input temporal para la selección
             const tempInput = document.createElement('textarea');
             tempInput.value = element.value || element.textContent; // Puede ser un input o un texto div
             document.body.appendChild(tempInput);
             tempInput.select();
-            
+                        
             try {
                 // Utiliza document.execCommand('copy') como fallback para entornos iFrame
                 document.execCommand('copy');
@@ -313,7 +279,7 @@
         // ----------------------------------------------------------------------
         // --- FUNCIONES DE EMAIL (BRECHAS) ---
         // ----------------------------------------------------------------------
-        
+                
         function isValidEmail(email) {
             const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
@@ -325,26 +291,24 @@
             const searchButton = document.getElementById('searchButtonEmail');
             const buttonText = document.getElementById('buttonTextEmail');
             const loader = document.getElementById('loaderEmail');
-
             document.getElementById('results').innerHTML = '';
 
             if (!isValidEmail(email)) {
                 displayMessage("⚠️ Por favor, introduce una dirección de correo electrónico válida.", 'bg-yellow-100 border-yellow-400 text-yellow-700');
                 return;
             }
-            
+                        
             if (searchButton) searchButton.disabled = true;
             if (buttonText) buttonText.textContent = 'Buscando...';
             if (loader) loader.classList.remove('hidden');
 
             const searchUrl = `${XPOSED_API_URL}/${encodeURIComponent(email)}`;
-
+            
             try {
                 const response = await fetch(searchUrl, {
                     method: 'GET',
                     headers: { "Accept": "application/json" }
                 });
-
                 const data = await response.json();
 
                 if (response.status === 200) {
@@ -357,7 +321,6 @@
                     const message = data.message || `Error ${response.status}: Ha ocurrido un error al consultar la API.`;
                     displayMessage(`❌ Error: ${message}`, 'bg-red-100 border-red-400 text-red-700');
                 }
-
             } catch (error) {
                 console.error("Error en la solicitud Fetch (Email):", error);
                 // Mensaje de error más descriptivo sobre el bloqueo de red
@@ -378,12 +341,11 @@
                 </div>
                 <h2 class="text-xl font-semibold text-gray-700 mb-4">Detalles de las Brechas:</h2>
             `;
-
             breaches.forEach(breach => {
                 const dataTypes = breach.Data_types ? breach.Data_types.join(', ') : 'Desconocido';
                 const isSensitive = dataTypes.toLowerCase().includes("password");
                 const cardClass = isSensitive ? 'border-red-500 bg-red-50' : 'border-orange-500 bg-orange-50';
-                
+                                
                 const breachDate = breach.date_of_breach ? new Date(breach.date_of_breach + 'T00:00:00').toLocaleDateString() : 'Fecha Desconocida';
                 const description = breach.breach_info || 'Sin descripción disponible.';
 
@@ -403,25 +365,21 @@
                     </div>
                 `;
             });
-
             if (resultsDiv) resultsDiv.innerHTML = html;
         }
 
-
         // ----------------------------------------------------------------------
-        // --- FUNCIONES DE TELÉFONO (VALIDACIÓN) ---
+        // --- FUNCIONES DE TELÉFONO (VALIDACIÓN Y SPAM CHECK) ---
         // ----------------------------------------------------------------------
-
         /**
-         * Valida y analiza un número de teléfono usando libphonenumber-js.
+         * Valida y analiza un número de teléfono usando libphonenumber-js, y añade un enlace a un verificador de spam.
          */
         function checkPhone() {
             const phoneInput = document.getElementById('phoneInput');
             const number = phoneInput ? phoneInput.value.trim() : '';
             const resultsDiv = document.getElementById('results');
-
             if (resultsDiv) resultsDiv.innerHTML = '';
-
+            
             if (number === '') {
                 displayMessage("⚠️ Por favor, introduce un número de teléfono.", 'bg-yellow-100 border-yellow-400 text-yellow-700');
                 return;
@@ -432,6 +390,12 @@
                 const phoneNumber = libphonenumber.parsePhoneNumberFromString(number);
 
                 if (phoneNumber && phoneNumber.isValid()) {
+                    // Usamos el formato E.164 para el enlace de búsqueda (+521234567890), quitando el '+'
+                    const searchNumber = phoneNumber.format('E.164').replace('+', ''); 
+                    
+                    // Enlace a un servicio público (ej. Tellows para reputación de spam)
+                    const spamCheckUrl = `https://www.tellows.es/num/${searchNumber}`; 
+
                     let html = `
                         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-md mb-6" role="alert">
                             <p class="font-bold text-lg">✅ ¡Validación Exitosa!</p>
@@ -444,6 +408,17 @@
                             <p><strong>Tipo de Número:</strong> <span class="font-medium">${phoneNumber.getType() ? capitalize(phoneNumber.getType()) : 'Desconocido'}</span></p>
                             <p><strong>Formato Nacional:</strong> ${phoneNumber.formatNational() || 'N/A'}</p>
                         </div>
+                        
+                        <div class="mt-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg shadow-md">
+                            <p class="font-bold">🚨 Verificación de Reputación (Spam/Riesgo):</p>
+                            <p class="text-sm mt-1">
+                                No se puede consultar una API de spam directamente. Haz clic en el siguiente enlace para verificar su reputación en un servicio externo:
+                            </p>
+                            <a href="${spamCheckUrl}" target="_blank" class="inline-flex items-center mt-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 py-2 px-4 rounded-lg transition duration-300">
+                                🔗 Consultar Reputación de Spam (${phoneNumber.format('E.164')})
+                            </a>
+                        </div>
+                        
                         <p class="text-xs text-gray-400 mt-4 italic">Nota: Esta es una validación de formato (sintáctica y geográfica), no comprueba si el número está activo.</p>
                     `;
                     if (resultsDiv) resultsDiv.innerHTML = html;
@@ -455,11 +430,9 @@
                 displayMessage(`❌ Error al procesar el número. Asegúrate de incluir el código de país (ej. +34).`, 'bg-red-100 border-red-400 text-red-700');
             }
         }
-
         // ----------------------------------------------------------------------
         // --- FUNCIONES DE DOMINIO (INFORMACIÓN) ---
         // ----------------------------------------------------------------------
-
         function isValidDomain(domain) {
             // Regex simple para dominios: no permite protocolos, paths, ni @
             const re = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?$/;
@@ -473,12 +446,10 @@
         function checkDomainInfo() {
             const domainInput = document.getElementById('domainInput');
             const domain = domainInput ? domainInput.value.trim() : '';
-
             // Desactivar el botón y el loader no son necesarios ya que no hay fetch
             // pero lo dejamos por consistencia si se cambiara a un fetch en el futuro.
             const searchButton = document.getElementById('searchButtonDomain');
             if (searchButton) searchButton.disabled = true;
-
             document.getElementById('results').innerHTML = '';
 
             if (!isValidDomain(domain)) {
@@ -486,11 +457,10 @@
                 if (searchButton) searchButton.disabled = false;
                 return;
             }
-            
+                        
             // Simulación de resultado de validación de formato (Client-side)
             const statusText = 'FORMATO VÁLIDO (Client-Side)';
             const statusClass = 'bg-blue-100 border-blue-500 text-blue-700';
-
             let html = `
                 <div class="${statusClass} border-l-4 p-4 rounded-lg shadow-md mb-6" role="alert">
                     <p class="font-bold text-lg">🌐 Dominio: <span class="font-extrabold">${domain}</span></p>
@@ -507,15 +477,12 @@
             `;
             const resultsDiv = document.getElementById('results');
             if (resultsDiv) resultsDiv.innerHTML = html;
-
             if (searchButton) searchButton.disabled = false;
         }
-
 
         // ----------------------------------------------------------------------
         // --- FUNCIONES DE IP (GEOLOCALIZACIÓN) ---
         // ----------------------------------------------------------------------
-
         function isValidIP(ip) {
             // Regex simple para IPv4 y la mayoría de IPv6
             const ipv4 = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -529,9 +496,8 @@
             const searchButton = document.getElementById('searchButtonIP');
             const buttonText = document.getElementById('buttonTextIP');
             const loader = document.getElementById('loaderIP');
-
             document.getElementById('results').innerHTML = '';
-
+            
             if (!isValidIP(ip)) {
                 displayMessage("⚠️ Por favor, introduce una dirección IP válida (ej: 8.8.8.8).", 'bg-yellow-100 border-yellow-400 text-yellow-700');
                 return;
@@ -543,96 +509,78 @@
 
             // Nueva API: ipapi.co. Si se proporciona una IP, se añade a la URL/json. Si no, usa /json.
             const searchUrl = ip ? `${IP_API_URL}${encodeURIComponent(ip)}/json/` : `${IP_API_URL}json/`; 
-
+             
             try {
                 const response = await fetch(searchUrl, {
                     method: 'GET',
                     headers: { "Accept": "application/json" }
                 });
-
                 const data = await response.json();
 
-                // ipapi.co devuelve un campo 'error' si algo falla.
-                if (data.error === true) {
-                    const reason = data.reason || "Error desconocido";
-                    displayMessage(`❌ Error de la API de IP: ${reason}. Intenta con otra IP o inténtalo de nuevo más tarde.`, 'bg-red-100 border-red-400 text-red-700');
-                } else if (response.ok) {
-                    displayIPResult(data);
+                if (response.ok && data.ip) { // Verifica si la respuesta es exitosa y tiene datos de IP
+                    displayIPInfo(data);
+                } else if (data.error) {
+                    displayMessage(`❌ Error de API: ${data.reason || 'No se pudo obtener la geolocalización de la IP.'}`, 'bg-red-100 border-red-400 text-red-700');
                 } else {
-                    const message = data.reason || `Error ${response.status}: Ha ocurrido un error al consultar la API.`;
-                    displayMessage(`❌ Error: ${message}`, 'bg-red-100 border-red-400 text-red-700');
+                    displayMessage(`❌ Error ${response.status}: No se pudo obtener la geolocalización de la IP.`, 'bg-red-100 border-red-400 text-red-700');
                 }
-
             } catch (error) {
                 console.error("Error en la solicitud Fetch (IP):", error);
-                // Mensaje de error más explícito para NetworkError/CORS.
-                displayMessage(`❌ Error de Conexión. Es probable que haya un bloqueo de CORS/red. El servicio usado ahora es ipapi.co.`, 'bg-red-100 border-red-400 text-red-700');
+                displayMessage(`❌ Error de Conexión: Ha ocurrido un problema al conectar con el servicio de geolocalización.`, 'bg-red-100 border-red-400 text-red-700');
             } finally {
                 if (searchButton) searchButton.disabled = false;
                 if (buttonText) buttonText.textContent = 'Geolocalizar IP';
                 if (loader) loader.classList.add('hidden');
             }
         }
-        
-        function displayIPResult(data) {
+
+        /**
+         * Muestra los resultados de la geolocalización de la IP.
+         * @param {object} data - Objeto de datos de respuesta de ipapi.co.
+         */
+        function displayIPInfo(data) {
             const resultsDiv = document.getElementById('results');
-            const ipInput = document.getElementById('ipInput');
-            const isUserIP = ipInput ? !ipInput.value.trim() : true;
-
-            // Mapeo de campos de la nueva API (ipapi.co)
-            const ipAddress = data.ip;
-            const country = data.country_name; 
-            const countryCode = data.country_code;
-            const regionName = data.region;
-            const regionCode = data.region_code;
-            const city = data.city;
-            const zip = data.postal; 
-            const lat = data.latitude;
-            const lon = data.longitude;
-            const timezone = data.timezone;
-            const isp = data.org; 
-            const org = data.asn_org; 
-            const as = data.asn; 
-
             let html = `
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg shadow-md mb-6" role="alert">
-                    <p class="font-bold text-lg">📍 Geolocalización de IP</p>
-                    <p class="text-sm">IP: <span class="font-extrabold">${ipAddress}</span> ${isUserIP ? '(Tu IP actual)' : ''}</p>
+                    <p class="font-bold text-lg">📍 Información de Geolocalización (API: ipapi.co)</p>
+                    <p class="text-sm">IP Verificada: <span class="font-extrabold">${data.ip}</span></p>
                 </div>
                 <h2 class="text-xl font-semibold text-gray-700 mb-4">Detalles Geográficos y de Red:</h2>
-                <div class="bg-white p-4 rounded-xl shadow border border-gray-200 space-y-2 text-sm">
-                    <div class="grid grid-cols-2 gap-y-2">
-                        <p><strong>País:</strong> ${country || 'N/A'} (${countryCode || 'N/A'})</p>
-                        <p><strong>Región:</strong> ${regionName || 'N/A'} (${regionCode || 'N/A'})</p>
-                        <p><strong>Ciudad:</strong> ${city || 'N/A'} (C. Postal: ${zip || 'N/A'})</p>
-                        <p><strong>Zona Horaria:</strong> ${timezone || 'N/A'}</p>
-                        <p class="col-span-2"><strong>Coordenadas:</strong> Latitud ${lat || 'N/A'}, Longitud ${lon || 'N/A'}</p>
-                        <p class="col-span-2"><strong>ISP/Proveedor:</strong> ${isp || 'N/A'}</p>
-                        <p class="col-span-2"><strong>Organización AS:</strong> ${org || 'N/A'} (AS#${as || 'N/A'})</p>
-                    </div>
+                <div class="bg-white p-4 rounded-xl shadow border border-gray-200 space-y-2">
+                    <p><strong>País:</strong> ${data.country_name || 'N/A'} (${data.country_code || 'N/A'})</p>
+                    <p><strong>Ciudad:</strong> ${data.city || 'N/A'}, ${data.region || 'N/A'}</p>
+                    <p><strong>Lat/Lon:</strong> ${data.latitude || 'N/A'} / ${data.longitude || 'N/A'}</p>
+                    <p><strong>Zona Horaria:</strong> ${data.timezone || 'N/A'}</p>
+                    <p><strong>Organización (ISP):</strong> ${data.org || 'N/A'}</p>
+                    <p><strong>ASN:</strong> ${data.asn || 'N/A'}</p>
+                    <p><strong>Moneda:</strong> ${data.currency || 'N/A'}</p>
                 </div>
-                <p class="text-xs text-gray-400 mt-4 italic">La precisión de la geolocalización de IPs varía y a menudo solo apunta a la ciudad o región, no a la ubicación exacta.</p>
+                <p class="text-xs text-gray-400 mt-4 italic">
+                    Para la IP del usuario, el resultado es la IP pública con la que navegas. 
+                    Si es un VPN/Proxy, mostrará la ubicación de ese servicio.
+                </p>
             `;
             if (resultsDiv) resultsDiv.innerHTML = html;
         }
 
         // ----------------------------------------------------------------------
-        // --- FUNCIONES DE DNS (DNS LOOKUP) ---
+        // --- FUNCIONES DE DNS LOOKUP ---
         // ----------------------------------------------------------------------
-
+        
         async function checkDnsRecords() {
             const dnsInput = document.getElementById('dnsInput');
             const dnsTypeSelect = document.getElementById('dnsTypeSelect');
             const domain = dnsInput ? dnsInput.value.trim() : '';
-            const recordType = dnsTypeSelect ? dnsTypeSelect.value.trim() : 'A';
+            const recordType = dnsTypeSelect ? dnsTypeSelect.value : 'A';
+            
             const searchButton = document.getElementById('searchButtonDns');
             const buttonText = document.getElementById('buttonTextDns');
             const loader = document.getElementById('loaderDns');
-
+            
             document.getElementById('results').innerHTML = '';
 
             if (!isValidDomain(domain)) {
-                displayMessage("⚠️ Por favor, introduce un dominio válido (ej: google.com).", 'bg-yellow-100 border-yellow-400 text-yellow-700');
+                displayMessage("⚠️ Por favor, introduce un dominio válido (ej: ejemplo.com).", 'bg-yellow-100 border-yellow-400 text-yellow-700');
                 return;
             }
 
@@ -640,29 +588,27 @@
             if (buttonText) buttonText.textContent = 'Buscando...';
             if (loader) loader.classList.remove('hidden');
 
-            const searchUrl = `${GOOGLE_DNS_API_URL}?name=${encodeURIComponent(domain)}&type=${encodeURIComponent(recordType)}`;
+            // API de Google Public DNS: /resolve?name=domain&type=type
+            const searchUrl = `${GOOGLE_DNS_API_URL}?name=${encodeURIComponent(domain)}&type=${recordType}`; 
 
             try {
                 const response = await fetch(searchUrl, {
                     method: 'GET',
                     headers: { "Accept": "application/json" }
                 });
-
                 const data = await response.json();
 
-                if (response.ok && data.Status === 0) {
-                    displayDnsResult(domain, recordType, data);
-                } else if (data.Status === 3) {
-                     displayMessage(`⚠️ El dominio <span class="font-bold">${domain}</span> no existe o no se encontraron registros de tipo ${recordType}.`, 'bg-yellow-100 border-yellow-400 text-yellow-700');
+                if (response.ok && data.Status === 0) { // Status 0 significa éxito
+                    displayDnsRecords(domain, recordType, data);
+                } else if (data.Status === 3) { // NXDOMAIN
+                    displayMessage(`⚠️ El dominio <span class="font-bold">${domain}</span> existe, pero no se encontró un registro DNS de tipo **${recordType}** (Status 3: NXDOMAIN).`, 'bg-yellow-100 border-yellow-400 text-yellow-700');
                 } else {
-                    const errorMsg = data.Comment || `Error ${data.Status}: Error al consultar los registros DNS.`;
-                    displayMessage(`❌ Error: ${errorMsg}`, 'bg-red-100 border-red-400 text-red-700');
+                    const errorReason = data.Comment || `Status ${data.Status}`;
+                    displayMessage(`❌ Error al consultar DNS para ${domain} (${recordType}). Razón: ${errorReason}`, 'bg-red-100 border-red-400 text-red-700');
                 }
-
             } catch (error) {
                 console.error("Error en la solicitud Fetch (DNS):", error);
-                // Mensaje de error más descriptivo sobre el bloqueo de red
-                displayMessage(`❌ Error de Conexión. Es probable que la API de DNS esté bloqueada por las políticas de seguridad del navegador o el entorno de sandbox (CORS).`, 'bg-red-100 border-red-400 text-red-700');
+                displayMessage(`❌ Error de Conexión: Ha ocurrido un problema al conectar con el servicio de DNS Lookup.`, 'bg-red-100 border-red-400 text-red-700');
             } finally {
                 if (searchButton) searchButton.disabled = false;
                 if (buttonText) buttonText.textContent = 'Buscar Registros DNS';
@@ -670,181 +616,229 @@
             }
         }
 
-        function displayDnsResult(domain, recordType, data) {
+        /**
+         * Muestra los registros DNS en la sección de resultados.
+         * @param {string} domain - Dominio consultado.
+         * @param {string} recordType - Tipo de registro.
+         * @param {object} data - Objeto de datos de respuesta de la API de Google DNS.
+         */
+        function displayDnsRecords(domain, recordType, data) {
             const resultsDiv = document.getElementById('results');
-            const answers = data.Answer || [];
+            const answer = data.Answer;
 
             let html = `
-                <div class="bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-lg shadow-md mb-6" role="alert">
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-md mb-6" role="alert">
                     <p class="font-bold text-lg">📡 Registros DNS Encontrados</p>
-                    <p class="text-sm">Dominio: <span class="font-extrabold">${domain}</span> (Tipo: ${recordType})</p>
+                    <p class="text-sm">Dominio: <span class="font-extrabold">${domain}</span> | Tipo de Registro: <span class="font-extrabold">${recordType}</span></p>
                 </div>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Resultados:</h2>
             `;
 
-            if (answers.length > 0) {
+            if (answer && answer.length > 0) {
                 html += `
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Respuestas (${answers.length}):</h2>
-                    <div class="bg-white p-4 rounded-xl shadow border border-gray-200 space-y-3">
-                        ${answers.map(answer => {
-                            const ttlText = answer.TTL ? `TTL: ${answer.TTL}s` : '';
-                            return `
-                                <div class="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                    <p class="font-mono text-gray-800 break-words">${answer.data}</p>
-                                    <p class="text-xs text-gray-500 mt-1">${answer.name} (${ttlText})</p>
-                                </div>
-                            `;
-                        }).join('')}
+                    <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-xl shadow border border-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">Nombre</th>
+                                <th class="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">Tipo</th>
+                                <th class="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">TTL (seg)</th>
+                                <th class="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">Datos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                answer.forEach(record => {
+                    // Formato especial para registros MX (Priority + Target)
+                    const recordData = (recordType === 'MX') 
+                        ? (record.data.includes(' ') ? record.data.replace(' ', ' (Prioridad: ') + ')' : record.data)
+                        : record.data;
+
+                    html += `
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            <td class="py-2 px-4 border-b text-sm text-gray-800 font-mono">${record.name}</td>
+                            <td class="py-2 px-4 border-b text-sm text-gray-600">${record.type}</td>
+                            <td class="py-2 px-4 border-b text-sm text-gray-600">${record.TTL}</td>
+                            <td class="py-2 px-4 border-b text-sm text-gray-800 font-mono break-all">${recordData}</td>
+                        </tr>
+                    `;
+                });
+                html += `
+                        </tbody>
+                    </table>
                     </div>
                 `;
             } else {
                 html += `
-                    <p class="p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 rounded-lg">
-                        No se encontraron registros de tipo ${recordType} para el dominio ${domain}.
-                    </p>
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg">
+                        <p class="font-semibold">⚠️ No se encontraron registros de tipo ${recordType} para el dominio ${domain}.</p>
+                    </div>
                 `;
             }
             if (resultsDiv) resultsDiv.innerHTML = html;
         }
 
+
         // ----------------------------------------------------------------------
-        // --- FUNCIONES DE CONTRASEÑA (GENERACIÓN Y FUERZA) ---
+        // --- FUNCIONES DE CONTRASEÑA (GENERADOR/FUERZA) ---
         // ----------------------------------------------------------------------
-        
-        const symbols = '!@#$%^&*()_+~`|}{[]\:;?><,./-=';
-        const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-        const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const numbers = '0123456789';
 
         /**
-         * Genera una contraseña aleatoria.
+         * Genera una contraseña basada en los parámetros seleccionados por el usuario.
          */
         function generatePassword() {
-            const lengthInput = document.getElementById('passLength');
-            const length = lengthInput ? parseInt(lengthInput.value) : 16;
-            const useUppercase = document.getElementById('passUppercase')?.checked;
-            const useLowercase = document.getElementById('passLowercase')?.checked;
-            const useNumbers = document.getElementById('passNumbers')?.checked;
-            const useSymbols = document.getElementById('passSymbols')?.checked;
+            const length = parseInt(document.getElementById('passLength').value);
+            const includeUpper = document.getElementById('passUppercase').checked;
+            const includeLower = document.getElementById('passLowercase').checked;
+            const includeNumbers = document.getElementById('passNumbers').checked;
+            const includeSymbols = document.getElementById('passSymbols').checked;
 
-            let characters = '';
-            let password = '';
+            let charset = "";
+            let generatedPassword = "";
 
-            if (useUppercase) characters += uppercase;
-            if (useLowercase) characters += lowercase;
-            if (useNumbers) characters += numbers;
-            if (useSymbols) characters += symbols;
-            
-            // Si no se selecciona ningún tipo de caracter, se usa minúsculas por defecto.
-            if (characters.length === 0) {
-                characters = lowercase;
-                const lowerCheck = document.getElementById('passLowercase');
-                if (lowerCheck) lowerCheck.checked = true;
-            }
+            // Definición de caracteres
+            const CHARS = {
+                UPPER: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                LOWER: "abcdefghijklmnopqrstuvwxyz",
+                NUMBERS: "0123456789",
+                SYMBOLS: "!@#$%^&*()_+~`|}{[]:;?><,./-="
+            };
 
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * characters.length);
-                password += characters.charAt(randomIndex);
-            }
+            if (includeUpper) charset += CHARS.UPPER;
+            if (includeLower) charset += CHARS.LOWER;
+            if (includeNumbers) charset += CHARS.NUMBERS;
+            if (includeSymbols) charset += CHARS.SYMBOLS;
 
-            const generatedInput = document.getElementById('generatedPassword');
-            if (generatedInput) generatedInput.value = password;
-            
-            // Después de generar, evaluamos su fuerza
-            checkPasswordStrength(password);
-        }
-
-        /**
-         * Evalúa la fuerza de una contraseña (lógica simple de puntuación).
-         */
-        function checkPasswordStrength(inputPass = null) {
-            const passwordInput = document.getElementById('passwordStrengthInput');
-            const password = inputPass !== null ? inputPass : (passwordInput ? passwordInput.value : '');
-            const resultsDiv = document.getElementById('results');
-            
-            if (resultsDiv && currentTab !== 'password') resultsDiv.innerHTML = '';
-
-            const strengthIndicator = document.getElementById('strengthIndicator');
-            const strengthTextEl = document.getElementById('strengthText');
-
-            if (password.length === 0) {
-                if (strengthIndicator) {
-                    strengthIndicator.style.width = '0%';
-                    strengthIndicator.className = 'h-2 rounded-full transition-all duration-500';
-                }
-                if (strengthTextEl) {
-                    strengthTextEl.textContent = 'Introduce una contraseña para evaluar.';
-                }
+            // Asegurar al menos una opción esté seleccionada
+            if (charset === "") {
+                displayMessage('⚠️ Debes seleccionar al menos un tipo de carácter para generar la contraseña.', 'bg-yellow-100 border-yellow-400 text-yellow-700');
+                document.getElementById('generatedPassword').value = '';
                 return;
             }
 
+            // Generar la contraseña
+            for (let i = 0, n = charset.length; i < length; ++i) {
+                generatedPassword += charset.charAt(Math.floor(Math.random() * n));
+            }
+
+            document.getElementById('generatedPassword').value = generatedPassword;
+            document.getElementById('results').innerHTML = ''; // Limpiar resultados de la pestaña de fuerza si los hubiera
+            displayMessage('✅ Contraseña generada con éxito. ¡No la olvides!', 'bg-blue-100 border-blue-400 text-blue-700');
+        }
+
+        /**
+         * Evalúa la fuerza de la contraseña y actualiza la barra de progreso.
+         * (Implementación básica de evaluación)
+         */
+        function checkPasswordStrength() {
+            const password = document.getElementById('passwordStrengthInput').value;
+            const strengthIndicator = document.getElementById('strengthIndicator');
+            const strengthText = document.getElementById('strengthText');
+            
             let score = 0;
-            // Criterios de puntuación
-            if (password.length >= 8) score += 10;
-            if (password.length >= 12) score += 15;
-            if (password.length >= 16) score += 20;
+            let percent = 0;
+            let text = 'Muy Débil 😟';
+            let color = 'bg-red-500';
 
-            const hasLowercase = /[a-z]/.test(password);
-            const hasUppercase = /[A-Z]/.test(password);
-            const hasNumber = /\d/.test(password);
-            const hasSymbol = /[!@#$%^&*()_+~`|}{[\]\\:;"'?/.,-=`]/.test(password);
+            const len = password.length;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSymbol = /[^A-Za-z0-9]/.test(password);
+            const requirements = [hasUpper, hasLower, hasNumber, hasSymbol].filter(Boolean).length;
 
-            if (hasLowercase) score += 10;
-            if (hasUppercase) score += 10;
-            if (hasNumber) score += 10;
-            if (hasSymbol) score += 10;
+            if (len >= 8) score += 20;
+            if (len >= 12) score += 20;
+            
+            // Puntuación por cumplir requisitos de caracteres
+            if (requirements === 2) score += 10;
+            if (requirements === 3) score += 20;
+            if (requirements === 4) score += 40;
 
-            // Variedad
-            let characterTypes = 0;
-            if (hasLowercase) characterTypes++;
-            if (hasUppercase) characterTypes++;
-            if (hasNumber) characterTypes++;
-            if (hasSymbol) characterTypes++;
-            score += (characterTypes - 1) * 5;
+            // Ajustar el puntaje máximo a 100
+            percent = Math.min(score, 100);
 
-            // Asegurar que el score no exceda 100
-            score = Math.min(score, 100);
-
-            let strengthText = '';
-            let indicatorClass = '';
-            let textColor = '';
-
-            if (score < 30) {
-                strengthText = 'Muy Débil. Necesita más longitud y variedad.';
-                indicatorClass = 'bg-red-500';
-                textColor = 'text-red-600';
-            } else if (score < 60) {
-                strengthText = 'Débil. Añade mayúsculas, números y/o símbolos.';
-                indicatorClass = 'bg-orange-400';
-                textColor = 'text-orange-600';
-            } else if (score < 80) {
-                strengthText = 'Aceptable. Intenta que sea más larga (más de 12 caracteres).';
-                indicatorClass = 'bg-yellow-400';
-                textColor = 'text-yellow-600';
-            } else if (score < 95) {
-                strengthText = 'Fuerte. ¡Bien hecho!';
-                indicatorClass = 'bg-green-500';
-                textColor = 'text-green-600';
+            // Determinar texto y color
+            if (percent < 30) {
+                text = 'Muy Débil 😟';
+                color = 'bg-red-500';
+            } else if (percent < 60) {
+                text = 'Débil 😕';
+                color = 'bg-orange-500';
+            } else if (percent < 80) {
+                text = 'Mediana 😐';
+                color = 'bg-yellow-500';
+            } else if (percent < 100) {
+                text = 'Fuerte 😊';
+                color = 'bg-green-500';
             } else {
-                strengthText = 'Excelente. Prácticamente inquebrantable.';
-                indicatorClass = 'bg-green-700';
-                textColor = 'text-green-700';
+                text = '¡Muy Fuerte! 😎';
+                color = 'bg-green-700';
+            }
+            
+            if (len === 0) {
+                percent = 0;
+                text = '';
             }
 
-            if (strengthIndicator) {
-                strengthIndicator.style.width = `${score}%`;
-                strengthIndicator.className = `h-2 rounded-full transition-all duration-500 ${indicatorClass}`;
-            }
-            if (strengthTextEl) {
-                strengthTextEl.innerHTML = `Fuerza: <span class="${textColor}">${strengthText}</span> (${score}%)`;
+            // Actualizar la interfaz
+            strengthIndicator.style.width = `${percent}%`;
+            strengthIndicator.className = `h-2 rounded-full transition-all duration-500 ${color}`;
+            strengthText.textContent = text;
+            document.getElementById('results').innerHTML = ''; // Limpiar resultados
+
+            if (len > 0) {
+                 displayStrengthMessage(percent, text);
             }
         }
 
-        // Inicializar la aplicación al cargar
+        function displayStrengthMessage(percent, text) {
+            const resultsDiv = document.getElementById('results');
+            if (!resultsDiv) return;
+
+            let messageClass = '';
+            let messageHtml = '';
+
+            if (percent < 60) {
+                messageClass = 'bg-red-100 border-red-500 text-red-700';
+                messageHtml = `
+                    <p class="font-bold text-lg">🚨 ¡Contraseña ${text}!</p>
+                    <p class="text-sm">Se recomienda que la longitud sea de al menos 12 caracteres y que incluya una combinación de mayúsculas, minúsculas, números y símbolos.</p>
+                `;
+            } else if (percent < 80) {
+                 messageClass = 'bg-yellow-100 border-yellow-500 text-yellow-700';
+                messageHtml = `
+                    <p class="font-bold text-lg">⚠️ Contraseña ${text}.</p>
+                    <p class="text-sm">Considera aumentar la longitud a 16 o más caracteres para mayor seguridad.</p>
+                `;
+            } else {
+                 messageClass = 'bg-green-100 border-green-500 text-green-700';
+                messageHtml = `
+                    <p class="font-bold text-lg">✅ ¡Contraseña ${text}!</p>
+                    <p class="text-sm">Excelente seguridad. Recuerda usar esta contraseña solo en un lugar.</p>
+                `;
+            }
+            
+            // Reutiliza la función displayMessage, pero con el HTML personalizado
+            resultsDiv.innerHTML = `
+                <div class="${messageClass} p-4 rounded-lg border-l-4 shadow-sm" role="alert">
+                    ${messageHtml}
+                </div>
+            `;
+        }
+
+
+        // ----------------------------------------------------------------------
+        // --- INICIALIZACIÓN ---
+        // ----------------------------------------------------------------------
+        // Función para asegurar que al cargar la página se activa la primera pestaña
         document.addEventListener('DOMContentLoaded', () => {
-            changeTab('email'); // Asegura que la pestaña de email esté activa por defecto
-            generatePassword(); // Genera una contraseña inicial
-            // checkPasswordStrength(); ya se llama dentro de generatePassword()
+            changeTab('email');
+            // Inicializa la fuerza de la contraseña en 0 al cargar
+            document.getElementById('strengthIndicator').style.width = '0%';
+            document.getElementById('strengthText').textContent = '';
         });
+
     </script>
 </body>
 </html>
